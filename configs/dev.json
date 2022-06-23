@@ -1,0 +1,22 @@
+{
+  "telegramBot": {
+    "name": "BotForOverheadsTest",
+    "userName": "OverheadsTestBot",
+    "httpToken": "5440653907:AAHdXVUg4p8a4pr7KRfTfp3mxNXlLgMWB8w"
+  },
+  "logger": {
+    "level": "debug",
+    "encoding": "json",
+    "outputPaths": [
+      "/tmp/logs"
+    ],
+    "errorOutputPaths": [
+      "/tmp/zip_err"
+    ],
+    "encoderConfig": {
+      "messageKey": "message",
+      "levelKey": "level",
+      "levelEncoder": "lowercase"
+    }
+  }
+}
