@@ -27,12 +27,13 @@ func NewZapLogger(config model.LoggerConfig) Logger {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer func(logger *zap.Logger) {
+	/*defer func(logger *zap.Logger) {
 		err := logger.Sync()
 		if err != nil {
 			log.Fatal(err)
 		}
-	}(logger) // flushes buffer, if any
+	}(logger) // flushes buffer, if any*/
+
 	return &zapLogger{logger: logger.Sugar(), config: config}
 }
 
