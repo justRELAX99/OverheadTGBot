@@ -1,6 +1,8 @@
 package app
 
 import (
+	"OverheadTGBot/internal/logic"
+	"OverheadTGBot/internal/repository"
 	"OverheadTGBot/pkg/config"
 	"OverheadTGBot/pkg/logger"
 	"OverheadTGBot/pkg/sqlite"
@@ -8,12 +10,21 @@ import (
 )
 
 func Run(configsDirectory string) {
+
+	//connections
 	config := config.LoadConfigSettings(configsDirectory)
 	logger := logger.NewZapLogger(config.Logger)
-	logger.Info("Configuration and logger successfully loaded")
 	botClient := telego.NewClient(config.TelegramBot)
-	repositoryClient := sqlite.NewClient(config.Sqlite, logger)
-	repositoryClient.GetSession()
+	sqliteClient := sqlite.NewClient(config.Sqlite, logger)
+
+	logger.Info("Connections successfully loaded")
+
+	//repository
+	messageRepository := repository.NewMessageRepository(sqliteClient)
+
+	//logic
+	messageLogic := logic.NewMessageLogic(messageRepository, botClient)
+
 	botClient.RegisterMessageHandler()
 	logger.Info("Telegram bor ready for work")
 }

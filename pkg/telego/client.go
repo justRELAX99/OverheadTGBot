@@ -29,7 +29,6 @@ type telegoClient struct {
 }
 
 func NewClient(config config.TelegramBotConfig) model.TelegramBot {
-
 	//Bot configs
 	cf := configTelego.BotConfigs{
 		BotAPI:         configTelego.DefaultBotAPI,
@@ -58,7 +57,7 @@ func NewClient(config config.TelegramBotConfig) model.TelegramBot {
 }
 
 func (t telegoClient) startHandler() {
-	t.bot.AddHandler("/start", func(u *objects.Update) {
+	err := t.bot.AddHandler("/start", func(u *objects.Update) {
 		//Sends the message to the chat that the message has been received from.
 		//The message will be a reply to the received message.
 		_, err := t.bot.SendMessage(
@@ -72,6 +71,9 @@ func (t telegoClient) startHandler() {
 		}
 
 	}, privateChatType, groupChatType)
+	if err != nil {
+		return
+	}
 }
 
 func (t telegoClient) RegisterMessageHandler() {
