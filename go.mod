@@ -6,6 +6,7 @@ require (
 	github.com/SakoDroid/telego v1.7.2
 	github.com/gocraft/dbr v0.0.0-20190714181702-8114670a83bd
 	github.com/mattn/go-sqlite3 v1.14.13
+	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.21.0
 )
 
