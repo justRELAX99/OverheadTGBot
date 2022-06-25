@@ -1,18 +1,19 @@
 package logger
 
 import (
+	"OverheadTGBot/internal/model"
 	"OverheadTGBot/pkg"
-	"OverheadTGBot/pkg/config/model"
+	config "OverheadTGBot/pkg/config/model"
 	"go.uber.org/zap"
 	"log"
 )
 
 type zapLogger struct {
-	config model.LoggerConfig
+	config config.LoggerConfig
 	logger *zap.SugaredLogger
 }
 
-func NewZapLogger(config model.LoggerConfig) Logger {
+func NewZapLogger(config config.LoggerConfig) model.Logger {
 	var logger *zap.Logger
 	var err error
 	if pkg.EnvironmentIsDev() {

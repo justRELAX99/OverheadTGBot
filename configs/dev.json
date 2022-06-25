@@ -19,5 +19,9 @@
       "levelKey": "level",
       "levelEncoder": "lowercase"
     }
+  },
+  "sqlite": {
+    "dbName": "overhead",
+    "maxOpenConns":10
   }
 }

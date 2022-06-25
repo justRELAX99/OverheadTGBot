@@ -12,6 +12,7 @@ import (
 type Config struct {
 	TelegramBot model.TelegramBotConfig `json:"telegramBot"`
 	Logger      model.LoggerConfig      `json:"logger"`
+	Sqlite      model.SqliteConfig      `json:"sqlite"`
 }
 
 func LoadConfigSettings(configsDirectory string) (config Config) {

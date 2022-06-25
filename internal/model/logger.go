@@ -1,4 +1,4 @@
-package logger
+package model
 
 type Logger interface {
 	Debug(msg ...interface{})
