@@ -21,6 +21,7 @@
     }
   },
   "sqlite": {
+    "path": "database/sqlite/",
     "dbName": "overhead",
     "maxOpenConns":10
   }

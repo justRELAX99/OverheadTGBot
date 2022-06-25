@@ -37,7 +37,7 @@ func (c sqliteClient) GetSession() dbr.SessionRunner {
 }
 
 func (c *sqliteClient) setConnection() (ok bool) {
-	connectionString := fmt.Sprintf("%v.db", c.config.DBName)
+	connectionString := fmt.Sprintf("%v/%v.db", c.config.Path, c.config.DBName)
 
 	conn, err := dbr.Open(driverName, connectionString, nil)
 	if err != nil {
