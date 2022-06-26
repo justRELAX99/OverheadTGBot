@@ -19,7 +19,6 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 			errType:    customErr.errType,
 			original:   wrappedErr,
 			stackTrace: customErr.stackTrace,
-			fields:     customErr.fields,
 			status:     customErr.status,
 			message:    customErr.message,
 		}

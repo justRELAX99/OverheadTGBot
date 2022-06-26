@@ -14,17 +14,20 @@ func Run(configsDirectory string) {
 	//connections
 	config := config.LoadConfigSettings(configsDirectory)
 	logger := logger.NewZapLogger(config.Logger)
-	botClient := telego.NewClient(config.TelegramBot)
 	sqliteClient := sqlite.NewClient(config.Sqlite, logger)
-
+	telegoClient := telego.NewTelegoClient(config.TelegramBot)
 	logger.Info("Connections successfully loaded")
 
 	//repository
 	messageRepository := repository.NewMessageRepository(sqliteClient)
-
+	userRepository := repository.NewUserRepository(sqliteClient)
 	//logic
-	messageLogic := logic.NewMessageLogic(messageRepository, botClient)
+	messageLogic := logic.NewMessageLogic(messageRepository)
+	userLogic := logic.NewUserLogic(userRepository)
 
-	botClient.RegisterMessageHandler()
+	brokerLogic := logic.NewBrokerLogic(telegoClient, telegoClient, messageLogic, userLogic)
 	logger.Info("Telegram bor ready for work")
+
+	brokerLogic.RedirectParcels()
+
 }

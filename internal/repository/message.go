@@ -6,8 +6,13 @@ type messageRepository struct {
 	repositoryClient model.RepositoryClient
 }
 
-func NewMessageRepository(repositoryClietn model.RepositoryClient) model.MessageRepository {
+func NewMessageRepository(repositoryClient model.RepositoryClient) model.MessageRepository {
 	return &messageRepository{
-		repositoryClient: repositoryClietn,
+		repositoryClient: repositoryClient,
 	}
+}
+
+func (m messageRepository) SaveMessage(messages []model.Message) error {
+	//TODO implement me
+	panic("implement me")
 }

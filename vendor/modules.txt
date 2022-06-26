@@ -14,6 +14,9 @@ github.com/gocraft/dbr/dialect
 # github.com/mattn/go-sqlite3 v1.14.13
 ## explicit; go 1.12
 github.com/mattn/go-sqlite3
+# github.com/nikepan/go-datastructures v1.0.32
+## explicit
+github.com/nikepan/go-datastructures/queue
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
