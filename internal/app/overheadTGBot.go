@@ -17,7 +17,6 @@ func Run(configsDirectory string) {
 	sqliteClient := sqlite.NewClient(config.Sqlite, logger)
 	telegoClient := telego.NewTelegoClient(config.TelegramBot)
 	logger.Info("Connections successfully loaded")
-
 	//repository
 	messageRepository := repository.NewMessageRepository(sqliteClient)
 	userRepository := repository.NewUserRepository(sqliteClient)

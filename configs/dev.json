@@ -3,7 +3,8 @@
     "name": "BotForOverheadsTest",
     "userName": "OverheadsTestBot",
     "httpToken": "5440653907:AAHdXVUg4p8a4pr7KRfTfp3mxNXlLgMWB8w",
-    "outputPaths": "/tmp/telego_logs"
+    "outputPaths": "/tmp/telego_logs",
+    "recipientChatId": ""
   },
   "logger": {
     "level": "debug",

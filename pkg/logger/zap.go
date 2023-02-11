@@ -1,19 +1,20 @@
 package logger
 
 import (
-	"OverheadTGBot/internal/model"
 	"OverheadTGBot/pkg"
 	config "OverheadTGBot/pkg/config/model"
 	"go.uber.org/zap"
 	"log"
 )
 
+var serviceLogger zapLogger
+
 type zapLogger struct {
 	config config.LoggerConfig
 	logger *zap.SugaredLogger
 }
 
-func NewZapLogger(config config.LoggerConfig) model.Logger {
+func NewZapLogger(config config.LoggerConfig) Logger {
 	var logger *zap.Logger
 	var err error
 	if pkg.EnvironmentIsDev() {
@@ -34,8 +35,13 @@ func NewZapLogger(config config.LoggerConfig) model.Logger {
 			log.Fatal(err)
 		}
 	}(logger) // flushes buffer, if any*/
+	serviceLogger := &zapLogger{logger: logger.Sugar(), config: config}
 
-	return &zapLogger{logger: logger.Sugar(), config: config}
+	return serviceLogger
+}
+
+func Get() Logger {
+	return serviceLogger
 }
 
 func (z zapLogger) Debug(msg ...interface{}) {

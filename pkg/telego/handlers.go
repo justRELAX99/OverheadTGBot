@@ -48,3 +48,7 @@ func (t *telegoClient) messageHandler(timeout time.Duration) {
 		}
 	}()
 }
+
+func (t *telegoClient) registerChannel() {
+
+}

@@ -3,6 +3,7 @@ package sqlite
 import (
 	"OverheadTGBot/internal/model"
 	config "OverheadTGBot/pkg/config/model"
+	"OverheadTGBot/pkg/logger"
 	"fmt"
 	"github.com/gocraft/dbr"
 	_ "github.com/mattn/go-sqlite3"
@@ -17,10 +18,10 @@ const (
 type sqliteClient struct {
 	config     config.SqliteConfig
 	connection *dbr.Connection
-	logger     model.Logger
+	logger     logger.Logger
 }
 
-func NewClient(config config.SqliteConfig, logger model.Logger) model.RepositoryClient {
+func NewClient(config config.SqliteConfig, logger logger.Logger) model.RepositoryClient {
 	client := sqliteClient{
 		config: config,
 		logger: logger,
@@ -32,7 +33,7 @@ func NewClient(config config.SqliteConfig, logger model.Logger) model.Repository
 	return &client
 }
 
-func (c sqliteClient) GetSession() dbr.SessionRunner {
+func (c *sqliteClient) GetSession() dbr.SessionRunner {
 	return c.getConnection().NewSession(&dbr.NullEventReceiver{})
 }
 
@@ -56,14 +57,14 @@ func (c *sqliteClient) setConnection() (ok bool) {
 	return true
 }
 
-func (c sqliteClient) getConnection() *dbr.Connection {
+func (c *sqliteClient) getConnection() *dbr.Connection {
 	if !c.checkConnection() {
 		c.reconnect()
 	}
 	return c.connection
 }
 
-func (c sqliteClient) checkConnection() (ok bool) {
+func (c *sqliteClient) checkConnection() (ok bool) {
 	if c.connection == nil {
 		return false
 	}
