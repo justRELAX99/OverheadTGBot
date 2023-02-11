@@ -1,3 +1,4 @@
 *.exe
 configs.json
 /.idea
+/database/sqlite/
