@@ -13,6 +13,7 @@ const (
 	textColumn       = "text"
 	dateColumn       = "date"
 	statusColumn     = "status"
+	messageIdColumn  = "id"
 	telegramIdColumn = "telegram_id"
 	userNameColumn   = "user_name"
 )

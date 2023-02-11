@@ -3,6 +3,7 @@ package entity
 import "context"
 
 type User struct {
+	Id         int
 	TelegramId int
 	UserName   string
 }

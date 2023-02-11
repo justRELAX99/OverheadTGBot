@@ -35,7 +35,7 @@ func NewZapLogger(config config.LoggerConfig) Logger {
 			log.Fatal(err)
 		}
 	}(logger) // flushes buffer, if any*/
-	serviceLogger := &zapLogger{logger: logger.Sugar(), config: config}
+	serviceLogger = zapLogger{logger: logger.Sugar(), config: config}
 
 	return serviceLogger
 }

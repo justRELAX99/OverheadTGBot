@@ -3,6 +3,7 @@ package telego
 import (
 	"OverheadTGBot/internal/entity"
 	config "OverheadTGBot/pkg/config/entity"
+	"OverheadTGBot/pkg/errors"
 	"github.com/SakoDroid/telego"
 	configTelego "github.com/SakoDroid/telego/configs"
 	"time"
@@ -95,6 +96,10 @@ func (t telegoClient) HandleParcels() chan entity.Parcel {
 	return parcelsChannel
 }
 
-func (t telegoClient) SendParcels(parcels entity.Parcels) error {
+func (t telegoClient) SendMessage(message entity.Message) error {
+	_, err := t.bot.SendMessageUN(t.config.RecipientChatId, message.Text+" resend", "", 0, false, false)
+	if err != nil {
+		return errors.Wrap(err, "cant send message")
+	}
 	return nil
 }

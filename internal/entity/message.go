@@ -10,15 +10,18 @@ const (
 )
 
 type Message struct {
-	Text string
-	Date int
+	Id     int
+	Text   string
+	Date   int
+	Status string
 }
 
 type MessageLogic interface {
-	SaveMessagesForModerate(context.Context, []Message) error
-	SaveMessageForModerate(context.Context, Message) error
+	SaveMessage(context.Context, Message) (int, error)
+	UpdateStatus(context.Context, int, string) error
 }
 
 type MessageRepository interface {
-	SaveMessageForModerate(context.Context, Message) error
+	SaveMessage(context.Context, Message) (int, error)
+	UpdateStatus(context.Context, int, string) error
 }

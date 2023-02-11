@@ -26,7 +26,8 @@ func Run(configSettings config.Config) {
 	messageLogic := logic.NewMessageLogic(messageRepository)
 	userLogic := logic.NewUserLogic(userRepository)
 
-	receiverLogic := logic.NewParcelReceiver(telegoClient, messageLogic, userLogic)
+	senderLogic := logic.NewMessageSender(telegoClient, messageLogic)
+	receiverLogic := logic.NewParcelReceiver(telegoClient, messageLogic, userLogic, senderLogic)
 	logger.Info("Telegram bor ready for work")
 
 	receiverLogic.ReceiverParcels()

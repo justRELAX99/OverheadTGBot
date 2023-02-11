@@ -27,5 +27,6 @@ type ParcelReceiver interface {
 	ReceiverParcels()
 }
 
-type ParcelSender interface {
+type MessageSender interface {
+	SendMessage(Message)
 }

@@ -5,5 +5,5 @@ type TelegramBotConfig struct {
 	UserName        string `json:"userName"`
 	HttpToken       string `json:"httpToken"`
 	OutputPaths     string `json:"outputPaths"`
-	RecipientChatId int64  `json:"recipientChatId"`
+	RecipientChatId string `json:"recipientChatId"`
 }

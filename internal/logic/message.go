@@ -16,23 +16,21 @@ func NewMessageLogic(messageRepository entity.MessageRepository) entity.MessageL
 	}
 }
 
-func (m messageLogic) SaveMessagesForModerate(ctx context.Context, messages []entity.Message) (err error) {
-	if len(messages) == 0 {
-		return nil
+func (m messageLogic) SaveMessage(ctx context.Context, message entity.Message) (messageId int, err error) {
+	messageId, err = m.messageRepository.SaveMessage(ctx, message)
+	if err != nil {
+		return messageId, errors.Wrap(err, "cant save message")
 	}
-	for _, message := range messages {
-		err = m.messageRepository.SaveMessageForModerate(ctx, message)
-		if err != nil {
-			return errors.Wrap(err, "cant save messages")
-		}
-	}
-	return nil
+	return messageId, nil
 }
 
-func (m messageLogic) SaveMessageForModerate(ctx context.Context, message entity.Message) (err error) {
-	err = m.messageRepository.SaveMessageForModerate(ctx, message)
+func (m messageLogic) UpdateStatus(ctx context.Context, messageId int, status string) (err error) {
+	if messageId == 0 || status == "" {
+		return nil
+	}
+	err = m.messageRepository.UpdateStatus(ctx, messageId, status)
 	if err != nil {
-		return errors.Wrap(err, "cant save message")
+		return errors.Wrapf(err, "cant update status for message with id=%v", messageId)
 	}
 	return nil
 }
