@@ -1,17 +1,14 @@
 package telego
 
 import (
-	"OverheadTGBot/internal/model"
-	config "OverheadTGBot/pkg/config/model"
-	"OverheadTGBot/pkg/errors"
+	"OverheadTGBot/internal/entity"
+	config "OverheadTGBot/pkg/config/entity"
 	"github.com/SakoDroid/telego"
 	configTelego "github.com/SakoDroid/telego/configs"
-	objs "github.com/SakoDroid/telego/objects"
 	"time"
 
 	"github.com/nikepan/go-datastructures/queue"
 	"log"
-	"strings"
 )
 
 //Chat types
@@ -42,7 +39,7 @@ type telegoClient struct {
 	Queue       *queue.Queue
 }
 
-func NewTelegoClient(config config.TelegramBotConfig) telegoClient {
+func NewTelegoClient(config config.TelegramBotConfig) entity.TelegramClient {
 	client := initClient(config)
 	client.registerHandlers()
 	return client
@@ -74,33 +71,30 @@ func initClient(config config.TelegramBotConfig) telegoClient {
 	return client
 }
 
-func (t telegoClient) GetParcels() (parcels []model.Parcel, err error) {
-	var datas []interface{}
-	datas, err = t.Queue.Poll(countMessage, queueTimeout)
-	if err != nil {
-		if strings.Contains(err.Error(), "queue: poll timed out") {
-			return nil, nil
-		}
-		return nil, errors.Wrap(err, "Cant get messages from pool")
-	}
+func (t telegoClient) HandleParcels() chan entity.Parcel {
+	parcelsChannel := make(chan entity.Parcel)
+	telegoMessageChannel := t.messageHandler()
+	go func() {
+		for telegoData := range telegoMessageChannel {
 
-	for _, data := range datas {
-		if telegoData, ok := data.(*objs.Update); ok {
-			message := model.Message{
+			message := entity.Message{
 				Text: telegoData.Message.Text,
+				Date: telegoData.Message.Date,
 			}
-			user := model.User{
-				UserName: telegoData.Message.From.Username,
+
+			user := entity.User{
+				TelegramId: telegoData.Message.From.Id,
+				UserName:   telegoData.Message.From.Username,
 			}
-			parcels = append(parcels, model.Parcel{
+			parcelsChannel <- entity.Parcel{
 				Message: message,
 				Sender:  user,
-			})
+			}
 		}
-	}
-	return parcels, nil
+	}()
+	return parcelsChannel
 }
 
-func (t telegoClient) SendParcels([]model.Parcel) error {
+func (t telegoClient) SendParcels(parcels entity.Parcels) error {
 	return nil
 }

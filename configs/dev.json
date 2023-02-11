@@ -4,7 +4,7 @@
     "userName": "OverheadsTestBot",
     "httpToken": "5440653907:AAHdXVUg4p8a4pr7KRfTfp3mxNXlLgMWB8w",
     "outputPaths": "/tmp/telego_logs",
-    "recipientChatId": ""
+    "recipientChatId": 0
   },
   "logger": {
     "level": "debug",

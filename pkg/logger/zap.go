@@ -2,7 +2,7 @@ package logger
 
 import (
 	"OverheadTGBot/pkg"
-	config "OverheadTGBot/pkg/config/model"
+	config "OverheadTGBot/pkg/config/entity"
 	"go.uber.org/zap"
 	"log"
 )
@@ -17,13 +17,13 @@ type zapLogger struct {
 func NewZapLogger(config config.LoggerConfig) Logger {
 	var logger *zap.Logger
 	var err error
-	if pkg.EnvironmentIsDev() {
+	if pkg.IsDev() {
 		logger, err = zap.NewDevelopment()
 	}
-	if pkg.EnvironmentIsProd() {
+	if pkg.IsProd() {
 		logger, err = zap.NewProduction()
 	}
-	if !pkg.EnvironmentIsProd() && !pkg.EnvironmentIsDev() {
+	if !pkg.IsProd() && !pkg.IsDev() {
 		logger = zap.NewExample()
 	}
 	if err != nil {

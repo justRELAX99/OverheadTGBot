@@ -1,4 +1,4 @@
-package model
+package entity
 
 type SqliteConfig struct {
 	Path         string `json:"path"`

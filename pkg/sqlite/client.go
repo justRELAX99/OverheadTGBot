@@ -1,8 +1,8 @@
 package sqlite
 
 import (
-	"OverheadTGBot/internal/model"
-	config "OverheadTGBot/pkg/config/model"
+	"OverheadTGBot/internal/entity"
+	config "OverheadTGBot/pkg/config/entity"
 	"OverheadTGBot/pkg/logger"
 	"fmt"
 	"github.com/gocraft/dbr"
@@ -21,7 +21,7 @@ type sqliteClient struct {
 	logger     logger.Logger
 }
 
-func NewClient(config config.SqliteConfig, logger logger.Logger) model.RepositoryClient {
+func NewClient(config config.SqliteConfig, logger logger.Logger) entity.RepositoryClient {
 	client := sqliteClient{
 		config: config,
 		logger: logger,

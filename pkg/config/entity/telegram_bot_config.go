@@ -1,4 +1,4 @@
-package model
+package entity
 
 type TelegramBotConfig struct {
 	Name            string `json:"name"`

@@ -1,4 +1,4 @@
-package model
+package entity
 
 type LoggerConfig struct {
 	Level            string   `json:"level"`

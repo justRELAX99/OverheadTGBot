@@ -3,13 +3,11 @@ package telego
 import (
 	"fmt"
 	"github.com/SakoDroid/telego/objects"
-	"github.com/nikepan/go-datastructures/queue"
-	"time"
+	objs "github.com/SakoDroid/telego/objects"
 )
 
 func (t *telegoClient) registerHandlers() {
 	t.startHandler()
-	t.messageHandler(botTimeout)
 }
 
 //Sends the message to the chat that the message has been received from.
@@ -33,20 +31,10 @@ func (t *telegoClient) startHandler() {
 }
 
 //Tries to get messages from telegram bot
-func (t *telegoClient) messageHandler(timeout time.Duration) {
+func (t *telegoClient) messageHandler() chan *objs.Update {
 	//Register the channel
-	t.Queue = queue.New(queueSize)
-
 	messageChannel, _ := t.bot.AdvancedMode().RegisterChannel("", messageMediaType)
-
-	go func() {
-		for {
-			time.Sleep(timeout)
-			//Wait for updates
-			up := <-*messageChannel
-			t.Queue.Put(up)
-		}
-	}()
+	return *messageChannel
 }
 
 func (t *telegoClient) registerChannel() {

@@ -12,30 +12,10 @@ func GetEnvironment() string {
 	return os.Getenv(globalEnvVariableName)
 }
 
-func EnvironmentIsProd() bool {
-	if GetEnvironment() == prodEnvName {
-		return true
-	}
-	return false
+func IsProd() bool {
+	return GetEnvironment() == prodEnvName
 }
 
-func EnvironmentIsDev() bool {
-	if GetEnvironment() == devEnvName {
-		return true
-	}
-	return false
-}
-
-func CheckEnvironmentIsProd(environment string) bool {
-	if environment == prodEnvName {
-		return true
-	}
-	return false
-}
-
-func CheckEnvironmentIsDev(environment string) bool {
-	if environment == devEnvName {
-		return true
-	}
-	return false
+func IsDev() bool {
+	return GetEnvironment() == devEnvName
 }

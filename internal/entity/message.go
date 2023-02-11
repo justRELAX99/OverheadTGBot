@@ -1,4 +1,6 @@
-package model
+package entity
+
+import "context"
 
 const (
 	StatusReady     = "ready"
@@ -9,12 +11,14 @@ const (
 
 type Message struct {
 	Text string
+	Date int
 }
 
 type MessageLogic interface {
-	SaveMessage([]Message) error
+	SaveMessagesForModerate(context.Context, []Message) error
+	SaveMessageForModerate(context.Context, Message) error
 }
 
 type MessageRepository interface {
-	SaveMessage([]Message) error
+	SaveMessageForModerate(context.Context, Message) error
 }

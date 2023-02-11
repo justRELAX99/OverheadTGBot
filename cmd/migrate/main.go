@@ -1,7 +1,7 @@
 package main
 
 import (
-	"OverheadTGBot/internal/app"
+	"OverheadTGBot/migration/app"
 	"OverheadTGBot/pkg/config"
 )
 

@@ -9,24 +9,27 @@ import (
 	"OverheadTGBot/pkg/telego"
 )
 
-func Run(configsDirectory string) {
+func Run(configSettings config.Config) {
 
 	//connections
-	config := config.LoadConfigSettings(configsDirectory)
-	logger := logger.NewZapLogger(config.Logger)
-	sqliteClient := sqlite.NewClient(config.Sqlite, logger)
-	telegoClient := telego.NewTelegoClient(config.TelegramBot)
+
+	logger := logger.NewZapLogger(configSettings.Logger)
+	sqliteClient := sqlite.NewClient(configSettings.Sqlite, logger)
+	telegoClient := telego.NewTelegoClient(configSettings.TelegramBot)
 	logger.Info("Connections successfully loaded")
+
 	//repository
 	messageRepository := repository.NewMessageRepository(sqliteClient)
 	userRepository := repository.NewUserRepository(sqliteClient)
+
 	//logic
 	messageLogic := logic.NewMessageLogic(messageRepository)
 	userLogic := logic.NewUserLogic(userRepository)
 
-	brokerLogic := logic.NewBrokerLogic(telegoClient, telegoClient, messageLogic, userLogic)
+	receiverLogic := logic.NewParcelReceiver(telegoClient, messageLogic, userLogic)
 	logger.Info("Telegram bor ready for work")
 
-	brokerLogic.RedirectParcels()
+	receiverLogic.ReceiverParcels()
 
+	select {}
 }

@@ -2,7 +2,7 @@ package config
 
 import (
 	"OverheadTGBot/pkg"
-	"OverheadTGBot/pkg/config/model"
+	"OverheadTGBot/pkg/config/entity"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,9 +10,9 @@ import (
 )
 
 type Config struct {
-	TelegramBot model.TelegramBotConfig `json:"telegramBot"`
-	Logger      model.LoggerConfig      `json:"logger"`
-	Sqlite      model.SqliteConfig      `json:"sqlite"`
+	TelegramBot entity.TelegramBotConfig `json:"telegramBot"`
+	Logger      entity.LoggerConfig      `json:"logger"`
+	Sqlite      entity.SqliteConfig      `json:"sqlite"`
 }
 
 func LoadConfigSettings(configsDirectory string) (config Config) {
