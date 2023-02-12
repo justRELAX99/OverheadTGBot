@@ -2,47 +2,26 @@ package telego
 
 import (
 	"OverheadTGBot/internal/entity"
-	"OverheadTGBot/pkg/logger"
+	"OverheadTGBot/pkg/errors"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (t telegoClient) HandleStart() {
-	log := logger.Get()
-	startChannel := t.initCommand("start")
-	go func() {
-		for telegoData := range startChannel {
-			msg := tgbotapi.NewMessage(telegoData.Message.Chat.ID, "hi,im telego bot")
-			_, err := t.bot.Send(msg)
-			if err != nil {
-				log.Errorf("cant send message,err = %v", err)
-			}
-		}
-	}()
-}
-
-func (t telegoClient) HandleParcels() chan entity.Parcel {
+func (t telegoClient) HandleCommand(command string) chan entity.Parcel {
 	parcelsChannel := make(chan entity.Parcel)
+	commandChannel := t.initCommandChannel(command)
 	go func() {
-		for telegoData := range t.messages {
-
-			message := entity.Message{
-				Text: telegoData.Message.Text,
-				Date: telegoData.Message.Date,
-			}
-
-			user := entity.User{
-				TelegramId: telegoData.Message.From.ID,
-				UserName:   telegoData.Message.From.UserName,
-			}
-			parcelsChannel <- entity.Parcel{
-				Message: message,
-				Sender:  user,
-			}
+		for telegoData := range commandChannel {
+			parcelsChannel <- t.convertToParcel(telegoData)
 		}
 	}()
 	return parcelsChannel
 }
 
-func (t telegoClient) SendMessage(message entity.Message) error {
+func (t telegoClient) SendMessage(chatId int64, text string) error {
+	msg := tgbotapi.NewMessage(chatId, text)
+	_, err := t.bot.Send(msg)
+	if err != nil {
+		return errors.Wrap(err, "cant send message")
+	}
 	return nil
 }

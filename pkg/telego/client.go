@@ -23,7 +23,6 @@ func NewTelegoClient(config config.TelegramBotConfig) entity.TelegramClient {
 		messages: make(chan tgbotapi.Update),
 	}
 	client.initClient()
-	client.HandleStart()
 	client.initUpdatesChannel()
 	return client
 }
@@ -37,7 +36,7 @@ func (t *telegoClient) initClient() {
 	return
 }
 
-func (t *telegoClient) initCommand(command string) chan tgbotapi.Update {
+func (t *telegoClient) initCommandChannel(command string) chan tgbotapi.Update {
 	commandChannel := make(chan tgbotapi.Update)
 	t.commands[command] = commandChannel
 	return commandChannel
