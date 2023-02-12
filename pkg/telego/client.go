@@ -3,12 +3,10 @@ package telego
 import (
 	"OverheadTGBot/internal/entity"
 	config "OverheadTGBot/pkg/config/entity"
-	"OverheadTGBot/pkg/errors"
-	"github.com/SakoDroid/telego"
-	configTelego "github.com/SakoDroid/telego/configs"
+	"OverheadTGBot/pkg/logger"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"time"
 
-	"github.com/nikepan/go-datastructures/queue"
 	"log"
 )
 
@@ -34,49 +32,58 @@ const (
 )
 
 type telegoClient struct {
-	config      config.TelegramBotConfig
-	bot         *telego.Bot
-	downTimeout int
-	Queue       *queue.Queue
+	config config.TelegramBotConfig
+	bot    *tgbotapi.BotAPI
+
+	commands map[string]chan tgbotapi.Update
+	messages chan tgbotapi.Update
 }
 
 func NewTelegoClient(config config.TelegramBotConfig) entity.TelegramClient {
-	client := initClient(config)
-	client.registerHandlers()
+	client := telegoClient{
+		config:   config,
+		commands: make(map[string]chan tgbotapi.Update),
+		messages: make(chan tgbotapi.Update),
+	}
+	client.initClient()
+	client.HandleStart()
+	client.initUpdatesChannel()
 	return client
 }
 
-func initClient(config config.TelegramBotConfig) telegoClient {
-	//Bot configs
-	cf := configTelego.BotConfigs{
-		BotAPI:         configTelego.DefaultBotAPI,
-		APIKey:         config.HttpToken,
-		UpdateConfigs:  configTelego.DefaultUpdateConfigs(),
-		Webhook:        false,
-		LogFileAddress: configTelego.DefaultLogFile,
+func (t *telegoClient) initClient() {
+	bot, err := tgbotapi.NewBotAPI(t.config.HttpToken)
+	if err != nil {
+		log.Fatal(err)
 	}
+	t.bot = bot
+	return
+}
 
-	bot, err := telego.NewBot(&cf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//Start the bot.
-	err = bot.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-	client := telegoClient{
-		config: config,
-		bot:    bot,
-	}
-	return client
+func (t telegoClient) HandleStart() {
+	log := logger.Get()
+	startChannel := t.initCommand("start")
+	go func() {
+		for telegoData := range startChannel {
+			msg := tgbotapi.NewMessage(telegoData.Message.Chat.ID, "hi,im telego bot")
+			_, err := t.bot.Send(msg)
+			if err != nil {
+				log.Errorf("cant send message,err = %v", err)
+			}
+		}
+	}()
+}
+
+func (t *telegoClient) initCommand(command string) chan tgbotapi.Update {
+	commandChannel := make(chan tgbotapi.Update)
+	t.commands[command] = commandChannel
+	return commandChannel
 }
 
 func (t telegoClient) HandleParcels() chan entity.Parcel {
 	parcelsChannel := make(chan entity.Parcel)
-	telegoMessageChannel := t.messageHandler()
 	go func() {
-		for telegoData := range telegoMessageChannel {
+		for telegoData := range t.messages {
 
 			message := entity.Message{
 				Text: telegoData.Message.Text,
@@ -84,8 +91,8 @@ func (t telegoClient) HandleParcels() chan entity.Parcel {
 			}
 
 			user := entity.User{
-				TelegramId: telegoData.Message.From.Id,
-				UserName:   telegoData.Message.From.Username,
+				TelegramId: telegoData.Message.From.ID,
+				UserName:   telegoData.Message.From.UserName,
 			}
 			parcelsChannel <- entity.Parcel{
 				Message: message,
@@ -97,9 +104,5 @@ func (t telegoClient) HandleParcels() chan entity.Parcel {
 }
 
 func (t telegoClient) SendMessage(message entity.Message) error {
-	_, err := t.bot.SendMessageUN(t.config.RecipientChatId, message.Text+" resend", "", 0, false, false)
-	if err != nil {
-		return errors.Wrap(err, "cant send message")
-	}
 	return nil
 }

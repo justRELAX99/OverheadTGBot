@@ -1,42 +1,38 @@
 package telego
 
 import (
-	"fmt"
-	"github.com/SakoDroid/telego/objects"
-	objs "github.com/SakoDroid/telego/objects"
+	"OverheadTGBot/pkg"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func (t *telegoClient) registerHandlers() {
-	t.startHandler()
-}
-
-//Sends the message to the chat that the message has been received from.
-//The message will be a reply to the received message.
-func (t *telegoClient) startHandler() {
-	err := t.bot.AddHandler("/start", func(u *objects.Update) {
-		_, err := t.bot.SendMessage(
-			u.Message.Chat.Id, "hi i'm a telegram bot!",
-			"",
-			u.Message.MessageId,
-			false,
-			false)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-	}, privateChatType, groupChatType)
-	if err != nil {
-		return
+func (t telegoClient) initUpdatesChannel() {
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+	updates := t.bot.GetUpdatesChan(u)
+	if pkg.IsDev() {
+		t.bot.Debug = true
 	}
+
+	go func() {
+		for update := range updates {
+			if update.Message == nil { // ignore any non-Message updates
+				continue
+			}
+			if update.Message.IsCommand() {
+				t.handleCommand(update)
+				continue
+			}
+			t.messages <- update
+		}
+	}()
+
+	return
 }
 
-//Tries to get messages from telegram bot
-func (t *telegoClient) messageHandler() chan *objs.Update {
-	//Register the channel
-	messageChannel, _ := t.bot.AdvancedMode().RegisterChannel("", messageMediaType)
-	return *messageChannel
-}
-
-func (t *telegoClient) registerChannel() {
-
+func (t telegoClient) handleCommand(update tgbotapi.Update) {
+	for k, v := range t.commands {
+		if k == update.Message.Command() {
+			v <- update
+		}
+	}
 }
