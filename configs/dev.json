@@ -1,10 +1,7 @@
 {
   "telegramBot": {
-    "name": "BotForOverheadsTest",
-    "userName": "OverheadsTestBot",
-    "httpToken": "5440653907:AAGY-sHAElW27YXGZVsNf4KVSI1NBfqeWjQ",
-    "outputPaths": "/tmp/telego_logs",
-    "recipientChatId": "450406726"
+    "adminPassword": "qwerty",
+    "httpToken": "5440653907:AAGY-sHAElW27YXGZVsNf4KVSI1NBfqeWjQ"
   },
   "logger": {
     "level": "debug",

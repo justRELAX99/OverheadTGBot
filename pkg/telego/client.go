@@ -2,33 +2,10 @@ package telego
 
 import (
 	"OverheadTGBot/internal/entity"
+	"OverheadTGBot/pkg"
 	config "OverheadTGBot/pkg/config/entity"
-	"OverheadTGBot/pkg/logger"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"time"
-
 	"log"
-)
-
-//Chat types
-const (
-	privateChatType    = "private"
-	groupChatType      = "group"
-	superGroupChatType = "supergroup"
-	channelChatType    = "channel"
-	allChatType        = "all"
-)
-
-const (
-	messageMediaType = "message"
-
-	//number of messages we are trying to get from the queue
-	countMessage = 100
-	//time after which we try to receive messages from the telegram bot
-	botTimeout = time.Second * 5
-	//queue size
-	queueSize    = 1000
-	queueTimeout = time.Second * 5
 )
 
 type telegoClient struct {
@@ -60,49 +37,40 @@ func (t *telegoClient) initClient() {
 	return
 }
 
-func (t telegoClient) HandleStart() {
-	log := logger.Get()
-	startChannel := t.initCommand("start")
-	go func() {
-		for telegoData := range startChannel {
-			msg := tgbotapi.NewMessage(telegoData.Message.Chat.ID, "hi,im telego bot")
-			_, err := t.bot.Send(msg)
-			if err != nil {
-				log.Errorf("cant send message,err = %v", err)
-			}
-		}
-	}()
-}
-
 func (t *telegoClient) initCommand(command string) chan tgbotapi.Update {
 	commandChannel := make(chan tgbotapi.Update)
 	t.commands[command] = commandChannel
 	return commandChannel
 }
 
-func (t telegoClient) HandleParcels() chan entity.Parcel {
-	parcelsChannel := make(chan entity.Parcel)
+func (t telegoClient) initUpdatesChannel() {
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+	updates := t.bot.GetUpdatesChan(u)
+	if pkg.IsDev() {
+		t.bot.Debug = true
+	}
+
 	go func() {
-		for telegoData := range t.messages {
-
-			message := entity.Message{
-				Text: telegoData.Message.Text,
-				Date: telegoData.Message.Date,
+		for update := range updates {
+			if update.Message == nil { // ignore any non-Message updates
+				continue
 			}
-
-			user := entity.User{
-				TelegramId: telegoData.Message.From.ID,
-				UserName:   telegoData.Message.From.UserName,
+			if update.Message.IsCommand() {
+				t.handleCommand(update)
+				continue
 			}
-			parcelsChannel <- entity.Parcel{
-				Message: message,
-				Sender:  user,
-			}
+			t.messages <- update
 		}
 	}()
-	return parcelsChannel
+
+	return
 }
 
-func (t telegoClient) SendMessage(message entity.Message) error {
-	return nil
+func (t telegoClient) handleCommand(update tgbotapi.Update) {
+	for k, v := range t.commands {
+		if k == update.Message.Command() {
+			v <- update
+		}
+	}
 }
