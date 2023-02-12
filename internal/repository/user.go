@@ -18,14 +18,15 @@ func NewUserRepository(repositoryClient entity.RepositoryClient) entity.UserRepo
 }
 
 func (u userRepository) SaveUser(ctx context.Context, user entity.User) error {
-	query := fmt.Sprintf("insert into %s (%s,%s) values(?,?)",
+	query := fmt.Sprintf("insert into %s (%s,%s,%s) values(?,?,?)",
 		userTable,
 		telegramIdColumn,
 		userNameColumn,
+		roleColumn,
 	)
 
 	session := u.repositoryClient.GetSession()
-	_, err := session.InsertBySql(query, user.TelegramId, user.UserName).ExecContext(ctx)
+	_, err := session.InsertBySql(query, user.TelegramId, user.UserName, user.Role).ExecContext(ctx)
 	if err != nil {
 		return errors.Wrap(err, executeError)
 	}

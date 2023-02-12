@@ -4,7 +4,8 @@ import "context"
 
 const (
 	StatusReady     = "ready"
-	StatusSend      = "sent"
+	StatusSent      = "sent"
+	StatusNotSent   = "not_sent"
 	StatusModerated = "moderated"
 	StatusDeleted   = "deleted"
 )

@@ -42,6 +42,8 @@ func (t *telegoClient) initCommandChannel(command string) chan tgbotapi.Update {
 	return commandChannel
 }
 
+//main channel, who got every message
+//can be only one
 func (t telegoClient) initUpdatesChannel() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60

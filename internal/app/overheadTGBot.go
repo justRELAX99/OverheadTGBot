@@ -27,10 +27,10 @@ func Run(configSettings config.Config) {
 	userLogic := logic.NewUserLogic(userRepository)
 
 	senderLogic := logic.NewMessageSender(telegoClient, messageLogic)
-	receiverLogic := logic.NewParcelReceiver(telegoClient, messageLogic, userLogic, senderLogic)
+	receiverLogic := logic.NewSecretReceiver(telegoClient, messageLogic, userLogic, senderLogic)
 	logger.Info("Telegram bor ready for work")
 
-	receiverLogic.ReceiverParcels()
+	receiverLogic.ReceiveSecret()
 
 	select {}
 }

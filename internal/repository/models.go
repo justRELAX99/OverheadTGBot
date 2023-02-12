@@ -10,6 +10,7 @@ const (
 )
 
 const (
+	roleColumn       = "role"
 	textColumn       = "text"
 	dateColumn       = "date"
 	statusColumn     = "status"

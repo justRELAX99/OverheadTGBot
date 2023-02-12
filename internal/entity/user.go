@@ -6,10 +6,10 @@ type User struct {
 	Id         int64
 	TelegramId int64
 	UserName   string
+	Role       Role
 }
 
 type UserLogic interface {
-	SaveUsers(context.Context, []User) error
 	SaveUser(context.Context, User) error
 }
 

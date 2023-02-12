@@ -33,12 +33,17 @@ func (m messageSender) handleSendParcel() {
 	ctx := context.Background()
 	log := logger.Get()
 	for message := range m.messageChannel {
-		err := m.telegramClient.SendMessage(message)
+		err := m.telegramClient.SendToAdminChannel(message.Text)
 		if err != nil {
 			log.Errorf("Cant send parcel,because %v", err.Error())
+			err = m.messageLogic.UpdateStatus(ctx, message.Id, entity.StatusNotSent)
+			if err != nil {
+				log.Errorf("Cant update message status,because %v", err.Error())
+				continue
+			}
 			continue
 		}
-		err = m.messageLogic.UpdateStatus(ctx, message.Id, entity.StatusSend)
+		err = m.messageLogic.UpdateStatus(ctx, message.Id, entity.StatusSent)
 		if err != nil {
 			log.Errorf("Cant update message status,because %v", err.Error())
 			continue

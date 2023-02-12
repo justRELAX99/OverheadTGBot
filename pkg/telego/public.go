@@ -11,10 +11,14 @@ func (t telegoClient) HandleCommand(command string) chan entity.Parcel {
 	commandChannel := t.initCommandChannel(command)
 	go func() {
 		for telegoData := range commandChannel {
-			parcelsChannel <- t.convertToParcel(telegoData)
+			parcelsChannel <- t.convertToParcel(telegoData, command)
 		}
 	}()
 	return parcelsChannel
+}
+
+func (t telegoClient) SendToAdminChannel(text string) error {
+	return t.SendMessage(t.config.RecipientChatId, text)
 }
 
 func (t telegoClient) SendMessage(chatId int64, text string) error {
